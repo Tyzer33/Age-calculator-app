@@ -1,7 +1,12 @@
+export type BirthdayMember = {
+  value: string
+  error: string | null
+}
+
 export type Birthday = {
-  day: string
-  month: string
-  year: string
+  day: BirthdayMember
+  month: BirthdayMember
+  year: BirthdayMember
 }
 
 export type Age = {

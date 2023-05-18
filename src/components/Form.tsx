@@ -1,4 +1,5 @@
 import { useContext } from 'react'
+import moment from 'moment'
 import styled from 'styled-components'
 import { AgeContextType } from '../types/types'
 import { AgeContext } from '../context/AgeProvider'
@@ -45,11 +46,12 @@ function Form() {
     e.preventDefault()
     ageCalculator()
   }
+
   return (
     <Container>
-      <Input label="day" placeholder="DD" />
-      <Input label="month" placeholder="MM" />
-      <Input label="year" placeholder="YYYY" />
+      <Input label="day" placeholder="DD" max={31} />
+      <Input label="month" placeholder="MM" max={12} />
+      <Input label="year" placeholder="YYYY" max={moment().year()} />
       <Button type="submit" onClick={(e) => handleClick(e)}>
         <Image src={arrow} alt="arrow" />
       </Button>

@@ -22,13 +22,13 @@ function Results() {
   return (
     <Container>
       <div>
-        <Span>{years || '--'}</Span> years
+        <Span>{years === null ? '--' : years}</Span> years
       </div>
       <div>
-        <Span>{months || '--'}</Span> months
+        <Span>{months === null ? '--' : months}</Span> months
       </div>
       <div>
-        <Span>{days || '--'}</Span> days
+        <Span>{days === null ? '--' : days}</Span> days
       </div>
     </Container>
   )
