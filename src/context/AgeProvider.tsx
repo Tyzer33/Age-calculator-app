@@ -1,23 +1,28 @@
 import { createContext, ReactNode, useCallback, useMemo, useState } from 'react'
-import moment from 'moment'
-import 'moment-precise-range-plugin'
+import dayjs from 'dayjs'
+import preciseDiff from 'dayjs-precise-range'
+import duration from 'dayjs/plugin/duration'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 import { Birthday, Age, AgeContextType } from '../types/types'
+
+dayjs.extend(customParseFormat)
+dayjs.extend(duration)
+dayjs.extend(preciseDiff)
 
 export const AgeContext = createContext<AgeContextType | null>(null)
 
 function AgeProvider({ children }: Props) {
-  // TODO: créer une fonction pour remplacer setBirthday
   const [birthday, setBirthday] = useState<Birthday>({
     day: {
-      value: '27',
+      value: '',
       error: null,
     },
     month: {
-      value: '08',
+      value: '',
       error: null,
     },
     year: {
-      value: '1999',
+      value: '',
       error: null,
     },
   })
@@ -28,21 +33,21 @@ function AgeProvider({ children }: Props) {
     years: null,
   })
 
-  const { day, month, year } = birthday
-  const inputedDate = moment(`${day.value}/${month.value}/${year.value}`, 'DD/MM/YYYY')
-  const actualDate = moment()
+  const {
+    day: { value: dayValue },
+    month: { value: monthValue },
+    year: { value: yearValue },
+  } = birthday
+  const completeYear = yearValue.padStart(4, '0')
+  const inputedDate = dayjs(`${completeYear}-${monthValue}-${dayValue}`, 'YYYY-MM-DD', true)
 
   const checkValidity = useCallback(
     (dateOfBirth: Birthday) => {
-      // TODO: simplifier grace à Moment
-
-      const actualYear = actualDate.year()
       let isValid = true
 
-      // TODO: simplifier la vérification de 'day' 'month' et 'year'
       Object.keys(dateOfBirth).forEach((time) => {
         if (!(time === 'day' || time === 'month' || time === 'year')) return
-        const max = { day: 31, month: 12, year: actualYear }
+        const max = { day: 31, month: 12, year: dayjs().year() }
         const { value } = dateOfBirth[time]
 
         if (value === '') {
@@ -84,7 +89,7 @@ function AgeProvider({ children }: Props) {
           },
         }))
         isValid = false
-      } else if (inputedDate.isAfter(actualDate)) {
+      } else if (inputedDate.isAfter(dayjs())) {
         setBirthday((prev) => ({
           ...prev,
           day: {
@@ -105,10 +110,9 @@ function AgeProvider({ children }: Props) {
 
       return isValid
     },
-    [inputedDate, actualDate]
+    [inputedDate]
   )
 
-  // TODO: changer le nom de 'ageCalculator'
   const ageCalculator = useCallback(() => {
     // Reset Error and Result
     setBirthday((prev) => ({
@@ -135,22 +139,14 @@ function AgeProvider({ children }: Props) {
 
     if (!checkValidity(birthday)) return
 
-    const diff = actualDate.diff(inputedDate)
-    const ageDuration = moment.duration(diff)
-
-    // TODO: vérifier pourquoi 01/01/00 ne me donne pas la date actuel
-    // essayer avec hasDays()
-    const m1 = moment('2014-01-01 12:00:00', 'YYYY-MM-DD HH:mm:ss')
-    const m2 = moment('2014-02-03 15:04:05', 'YYYY-MM-DD HH:mm:ss')
-    const diffe = moment.preciseDiff(m1, m2, true) // '1 month 2 days 3 hours 4 minutes 5 seconds'
-    console.log(diffe)
+    const { days, months, years } = dayjs.preciseDiff(dayjs(), inputedDate, true)
 
     setAge({
-      days: ageDuration.days(),
-      months: ageDuration.months(),
-      years: ageDuration.years(),
+      days,
+      months,
+      years,
     })
-  }, [birthday, checkValidity, actualDate, inputedDate])
+  }, [birthday, checkValidity, inputedDate])
 
   const value = useMemo(
     () => ({ birthday, setBirthday, age, ageCalculator }),

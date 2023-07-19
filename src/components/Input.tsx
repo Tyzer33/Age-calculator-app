@@ -2,10 +2,11 @@ import { useContext } from 'react'
 import styled, { css } from 'styled-components'
 import { AgeContextType } from '../types/types'
 import { AgeContext } from '../context/AgeProvider'
+import { device } from '../styles/variables'
 
 const Label = styled.label<{ error: boolean }>`
   font-size: 0.75rem;
-  letter-spacing: 2px;
+  letter-spacing: 0.125rem;
   color: var(--label-color);
 
   ${({ error }) =>
@@ -13,16 +14,21 @@ const Label = styled.label<{ error: boolean }>`
     css`
       color: var(--error-color);
     `}
+
+  @media ${device.desktop} {
+    font-size: 0.9375rem;
+    letter-spacing: 0.1875rem;
+  }
 `
 
 const Ipt = styled.input<{ error: boolean }>`
-  height: 3.375rem;
   width: 5.5rem;
+  height: 3.375rem;
   padding: 1rem;
   font-size: 1.25rem;
   border-radius: 10px;
   border: 1px solid var(--input-border-color);
-  margin-top: 0.25rem;
+  margin: 0.25rem 0;
 
   &:focus {
     outline: none;
@@ -34,6 +40,14 @@ const Ipt = styled.input<{ error: boolean }>`
   &::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+  }
+
+  @media ${device.desktop} {
+    width: 9.875rem;
+    height: 70px;
+    padding: 1.5rem;
+    margin: 0.625rem 0 0.5rem 0;
+    font-size: 2rem;
   }
 
   ${({ error }) =>
@@ -48,16 +62,21 @@ const Ipt = styled.input<{ error: boolean }>`
     `}
 `
 
-// TODO: styliser Error après avoir fait le style en 1440p
 const Error = styled.p`
-  font-weight: 400;
+  font-style: italic;
+  font-size: 0.625rem;
+  letter-spacing: initial;
+
+  @media ${device.desktop} {
+    font-size: 0.875rem;
+  }
 `
 
-function Input({ label, placeholder, max }: Props) {
+function Input({ label, placeholder, min, max }: Props) {
   const { birthday, setBirthday } = useContext(AgeContext) as AgeContextType
   const hasError = birthday[label].error !== null
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
 
     if (value.length > 4) return
@@ -66,7 +85,7 @@ function Input({ label, placeholder, max }: Props) {
     setBirthday((prev) => ({ ...prev, [label]: { ...prev[label], value } }))
   }
 
-  function filterDisallowedKey(e: React.KeyboardEvent<HTMLInputElement>) {
+  const filterDisallowedKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const disallowedKey = ['e', 'E', '-', ',', '+', '.']
 
     if (disallowedKey.includes(e.key)) {
@@ -78,12 +97,12 @@ function Input({ label, placeholder, max }: Props) {
     <Label htmlFor={label} error={hasError}>
       {label.toUpperCase()}
       <Ipt
-        min={1}
+        min={min}
         max={max}
         type="number"
         id={label}
-        onChange={(e) => handleChange(e)}
-        onKeyDown={(e) => filterDisallowedKey(e)}
+        onChange={handleChange}
+        onKeyDown={filterDisallowedKey}
         value={birthday[label].value}
         placeholder={placeholder}
         error={hasError}
@@ -98,9 +117,11 @@ export default Input
 type Props = {
   label: 'day' | 'month' | 'year'
   placeholder: 'DD' | 'MM' | 'YYYY'
+  min?: number | undefined
   max?: number | undefined
 }
 
 Input.defaultProps = {
+  min: 1,
   max: undefined,
 }

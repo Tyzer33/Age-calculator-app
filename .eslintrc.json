@@ -10,17 +10,17 @@
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react/jsx-runtime",
-    "prettier"
+    "prettier",
+    "plugin:styled-components-a11y/recommended"
   ],
   "overrides": [],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module",
-    "project": "tsconfig.json",
-    "tsconfigRootDir": "age-calculator-app-project"
+    "project": "tsconfig.json"
   },
-  "plugins": ["react", "@typescript-eslint"],
+  "plugins": ["react", "@typescript-eslint", "styled-components-a11y"],
   "ignorePatterns": ["vite.config.ts"],
   "rules": {}
 }
