@@ -73,8 +73,8 @@ const Error = styled.p`
 `
 
 function Input({ label, placeholder, min, max }: Props) {
-  const { birthday, setBirthday } = useContext(AgeContext) as AgeContextType
-  const hasError = birthday[label].error !== null
+  const { birth, setBirthTo, error } = useContext(AgeContext) as AgeContextType
+  const hasError = error[label] !== null
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
@@ -82,7 +82,7 @@ function Input({ label, placeholder, min, max }: Props) {
     if (value.length > 4) return
     if (label !== 'year' && value.length > 2) return
 
-    setBirthday((prev) => ({ ...prev, [label]: { ...prev[label], value } }))
+    setBirthTo(label, value)
   }
 
   const filterDisallowedKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -103,11 +103,11 @@ function Input({ label, placeholder, min, max }: Props) {
         id={label}
         onChange={handleChange}
         onKeyDown={filterDisallowedKey}
-        value={birthday[label].value}
+        value={birth[label]}
         placeholder={placeholder}
         error={hasError}
       />
-      <Error>{birthday[label].error}</Error>
+      <Error>{error[label]}</Error>
     </Label>
   )
 }

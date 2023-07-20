@@ -30,11 +30,11 @@ const Button = styled.button`
 `
 
 function SubmitButton() {
-  const { ageCalculator } = useContext(AgeContext) as AgeContextType
+  const { handleSubmit } = useContext(AgeContext) as AgeContextType
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
-    ageCalculator()
+    handleSubmit()
   }
   return (
     <Button type="submit" onClick={handleClick}>

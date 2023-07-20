@@ -1,12 +1,13 @@
-export type BirthdayMember = {
-  value: string
-  error: string | null
+export type Birth = {
+  day: string
+  month: string
+  year: string
 }
 
-export type Birthday = {
-  day: BirthdayMember
-  month: BirthdayMember
-  year: BirthdayMember
+export type DateError = {
+  day: string | null
+  month: string | null
+  year: string | null
 }
 
 export type Age = {
@@ -16,8 +17,9 @@ export type Age = {
 }
 
 export type AgeContextType = {
-  birthday: Birthday
-  setBirthday: React.Dispatch<React.SetStateAction<Birthday>>
+  birth: Birth
+  setBirthTo: (to: keyof Birth, value: string) => void
+  error: DateError
   age: Age
-  ageCalculator: () => void
+  handleSubmit: () => void
 }
